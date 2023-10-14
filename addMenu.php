@@ -1,23 +1,33 @@
 <?php
-$host = 'localhost';
-$db   = 'my_database';
-$user = 'my_user';
-$pass = 'my_password';
-$charset = 'utf8mb4';
+header('Content-Type: application/json');
 
-$dsn = "mysql:host=$host;dbname=$db;charset=$charset";
-$opt = [
-    PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
-    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-    PDO::ATTR_EMULATE_PREPARES   => false,
-];
-$pdo = new PDO($dsn, $user, $pass, $opt);
+$servername = "your_server_name";
+$username = "your_username";
+$password = "your_password";
+$dbname = "your_dbname";
 
-$menuName = $_POST['menuName'];
-$menuDescription = $_POST['menuDescription'];
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
 
-$stmt = $pdo->prepare("INSERT INTO menus (name, description) VALUES (?, ?)");
-$success = $stmt->execute([$menuName, $menuDescription]);
+// Check connection
+if ($conn->connect_error) {
+    die(json_encode(['success' => false, 'message' => 'Database connection failed']));
+}
 
-echo json_encode(['success' => $success]);
+$menuName = $_POST['Mname'];
+$menuDesc = $_POST['Mdesc'];
+
+$sql = "INSERT INTO your_table_name (menu_name, menu_description) VALUES (?, ?)";
+
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("ss", $menuName, $menuDesc);
+
+if ($stmt->execute()) {
+    echo json_encode(['success' => true]);
+} else {
+    echo json_encode(['success' => false]);
+}
+
+$stmt->close();
+$conn->close();
 ?>
