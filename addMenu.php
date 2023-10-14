@@ -1,10 +1,10 @@
 <?php
 header('Content-Type: application/json');
 
-$servername = "your_server_name";
-$username = "your_username";
-$password = "your_password";
-$dbname = "your_dbname";
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "pointofsale";
 
 // Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);
