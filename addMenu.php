@@ -13,11 +13,36 @@
       margin-bottom: 0;
       border-radius: 0;
     }
-    
+
+    .form-group label {
+    display: inline-block;
+    width: 200px;
+    text-align: left;
+    margin-left: 30px;
+    margin-bottom: 10px;
+    }
+
+    .form-group input {
+    display: inline-block;
+    width: 500px;
+    margin-left: 10px;
+    text-align: left;
+    margin-left: 30px;
+    margin-bottom: 10px;
+    }
+
+    .btn-container {
+    display: flex;
+    justify-content: left;
+    margin-top: 20px;
+    margin-left: 30px;
+    margin-bottom: 10px;
+    }
+
   </style>
 </head>
-<body>
 
+<body>
 <nav class="navbar navbar-inverse">
   <div class="container-fluid">
     <div class="navbar-header">
@@ -56,7 +81,9 @@
   <input type="text" class="form-control" id="Mdesc">
 </div>
 
-<a href="#" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">Submit</a>
+<div class="btn-container">
+  <a href="#" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">Submit</a>
+</div>
 
 </body>
 </html>
