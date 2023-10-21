@@ -6,21 +6,18 @@ $username = "root";
 $password = "";
 $dbname = "pointofsale";
 
-// Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);
-
-// Check connection
 if ($conn->connect_error) {
     die(json_encode(['success' => false, 'message' => 'Database connection failed']));
 }
 
-$menuName = $_POST['Mname'];
-$menuDesc = $_POST['Mdesc'];
+$menuId = $_GET['menuId'];  // Assuming the ID is sent as a GET parameter
+$menuName = $_POST['name'];
+$menuDesc = $_POST['description'];
 
-$sql = "INSERT INTO your_table_name (menu_name, menu_description) VALUES (?, ?)";
-
+$sql = "UPDATE your_table_name SET menu_name = ?, menu_description = ? WHERE id = ?";
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("ss", $menuName, $menuDesc);
+$stmt->bind_param("ssi", $menuName, $menuDesc, $menuId);
 
 if ($stmt->execute()) {
     echo json_encode(['success' => true]);

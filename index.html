@@ -1,16 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <title>Add Menu</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu Management</title>
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
-
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
@@ -30,7 +29,6 @@
             </div>
         </div>
     </nav>
-
     <div class="container mt-4">
         <h1>Create Menu</h1>
 
@@ -47,6 +45,55 @@
 
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
+
+        <div class="container mt-5">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Dish #1</td>
+                        <td>Fish</td>
+                        <td>
+                            <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#updateModal">Update</button>
+                            <button class="btn btn-danger" onclick="deleteItem()">Delete</button>
+                        </td>
+                    </tr>
+                    <!-- Additional rows can be added here -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Update Modal -->
+        <div id="updateModal" class="modal fade" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Update Menu</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="editMname" class="form-label">Menu Name:</label>
+                            <input type="text" class="form-control" id="editMname" maxlength="100">
+                        </div>
+                        <div class="mb-3">
+                            <label for="editMdesc" class="form-label">Menu Description:</label>
+                            <input type="text" class="form-control" id="editMdesc" maxlength="1000">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Save Changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- JS for Bootstrap 5 -->
@@ -88,13 +135,60 @@
                 reverseButtons: true
             }).then((result) => {
                 if (result.isConfirmed) {
-                    // Execute deletion here
-                    // For example, make an AJAX call to delete the item
-                    // If successful, display success alert, otherwise, display error alert
+                    // Execute deletion logic here, e.g., AJAX to your server
+                    // If successful, show a success alert, otherwise show an error alert
                     Swal.fire('Deleted!', 'Your item has been deleted.', 'success');
                 }
             });
         }
+
+         // Event listener for every "Update" button click
+         document.querySelectorAll('.update-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const row = button.closest('tr');
+                const menuName = row.querySelector('.menu-name').innerText;
+                const menuDescription = row.querySelector('.menu-description').innerText;
+
+                document.querySelector('#editMname').value = menuName;
+                document.querySelector('#editMdesc').value = menuDescription;
+
+                // Store the menu ID in the modal for later use
+                const menuId = row.getAttribute('data-menu-id');
+                document.querySelector('#updateModal').setAttribute('data-current-menu-id', menuId);
+            });
+        });
+
+        // Event listener for "Save Changes" button in Update modal
+        document.querySelector('#updateModal .btn-primary').addEventListener('click', function() {
+            const menuId = document.querySelector('#updateModal').getAttribute('data-current-menu-id');
+            const updatedName = document.querySelector('#editMname').value;
+            const updatedDescription = document.querySelector('#editMdesc').value;
+
+            fetch(`updateMenu.php?menuId=${menuId}`, {
+                method: 'POST',
+                body: JSON.stringify({
+                    name: updatedName,
+                    description: updatedDescription
+                }),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire('Success', 'Menu updated successfully!', 'success');
+                    var modal = bootstrap.Modal.getInstance(document.getElementById('updateModal'));
+                    modal.hide();
+                } else {
+                    Swal.fire('Error', 'Failed to update menu.', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire('Error', 'Something went wrong!', 'error');
+            });
+        });
     </script>
 </body>
 
